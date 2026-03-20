@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teral UV</title>
+  <link rel="icon" href="/favicon.svg" />
+  <style>
+    :root {
+      --bg: #191724;
+      --bg-soft: #1f1d2e;
+      --panel: #26233a;
+      --panel-2: #312a49;
+      --text: #e0def4;
+      --muted: #908caa;
+      --accent: #7967dd;
+      --accent-2: #eb6f92;
+      --border: rgba(224, 222, 244, 0.08);
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      --shell-width: 1380px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(121, 103, 221, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(235, 111, 146, 0.14), transparent 30%),
+        linear-gradient(180deg, #16121f 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(100% - 24px, var(--shell-width));
+      margin: 0 auto;
+      padding: 24px 0 32px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(25, 23, 36, 0.78);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      width: min(100% - 24px, var(--shell-width));
+      margin: 0 auto;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: var(--shadow);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(224, 222, 244, 0.06);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(224, 222, 244, 0.16);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: 0;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(121, 103, 221, 0.3);
+    }
+
+    .btn-danger {
+      border-color: rgba(251, 113, 133, 0.18);
+      color: #ffd9e0;
+      background: rgba(251, 113, 133, 0.08);
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      padding: 28px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(38, 35, 58, 0.92), rgba(31, 29, 46, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 78ch;
+    }
+
+    .omnibox-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .omnibox-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .omnibox {
+      width: 100%;
+      min-height: 58px;
+      border-radius: 16px;
+      border: 1px solid rgba(235, 111, 146, 0.35);
+      background: rgba(25, 23, 36, 0.86);
+      color: var(--text);
+      padding: 0 18px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .omnibox::placeholder {
+      color: #b4afcf;
+    }
+
+    .omnibox:focus,
+    .setting-input:focus,
+    .setting-select:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 4px rgba(235, 111, 146, 0.16);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(224, 222, 244, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(224, 222, 244, 0.16);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.85fr);
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(31, 29, 46, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pad {
+      padding: 22px;
+    }
+
+    .card h2,
+    .card h3 {
+      margin: 0 0 12px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(224, 222, 244, 0.04);
+      border: 1px solid rgba(224, 222, 244, 0.06);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #f59e0b;
+      box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.12);
+      flex: 0 0 auto;
+    }
+
+    .status-dot.ok {
+      background: #4ade80;
+      box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.12);
+    }
+
+    .status-dot.bad {
+      background: #fb7185;
+      box-shadow: 0 0 0 6px rgba(251, 113, 133, 0.12);
+    }
+
+    .status-text {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .status-subtext {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .viewer-wrap {
+      position: relative;
+      min-height: 74vh;
+      overflow: hidden;
+    }
+
+    .viewer-placeholder {
+      min-height: 74vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .viewer-placeholder h2 {
+      margin: 0 0 10px;
+      color: var(--text);
+    }
+
+    .viewer {
+      width: 100%;
+      min-height: 74vh;
+      border: 0;
+      background: white;
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .kv {
+      display: grid;
+      gap: 10px;
+    }
+
+    .kv-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(224, 222, 244, 0.07);
+    }
+
+    .kv-row:last-child {
+      border-bottom: 0;
+    }
+
+    .kv-key {
+      color: var(--muted);
+    }
+
+    .kv-value {
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .codeish {
+      font-family: Consolas, "Courier New", monospace;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(224, 222, 244, 0.08);
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: #f3f0ff;
+    }
+
+    .help-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      display: grid;
+      gap: 8px;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .setting-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .setting-label {
+      font-size: 0.92rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .setting-help {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .setting-input,
+    .setting-select {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(224, 222, 244, 0.12);
+      background: rgba(25, 23, 36, 0.86);
+      color: var(--text);
+      padding: 0 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .setting-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .footer {
+      width: min(100% - 24px, var(--shell-width));
+      margin: 0 auto;
+      padding: 0 0 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .omnibox-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-primary {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .actions > * {
+        flex: 1 1 auto;
+      }
+
+      .shell {
+        width: min(100% - 16px, var(--shell-width));
+        padding-top: 18px;
+      }
+
+      .hero,
+      .card-pad {
+        padding: 18px;
+      }
+
+      .viewer,
+      .viewer-placeholder {
+        min-height: 64vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="/logo.png" alt="Teral logo" />
+        <div class="brand-copy">
+          <p class="brand-title">Teral UV</p>
+          <p class="brand-subtitle">Python-hosted Ultraviolet-style frontend</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="open-top" class="btn" type="button">Open in new tab</button>
+        <button id="open-homepage" class="btn" type="button">Open homepage</button>
+        <button id="reset-app" class="btn btn-danger" type="button">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <h1>UV-style setup, without npm.</h1>
+      <p>
+        This frontend runs against a Python static server plus a Wisp backend.
+        It loads the Ultraviolet stack, configures a transport, and opens proxied pages
+        inside the viewer below.
+      </p>
+
+      <form id="proxy-form" class="omnibox-form">
+        <div class="omnibox-row">
+          <input
+            id="proxy-input"
+            class="omnibox"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Enter a URL or search term"
+            aria-label="URL or search term"
+          />
+          <button class="btn btn-primary" type="submit">Open</button>
+        </div>
+
+        <div class="chips">
+          <button class="chip" type="button" data-url="https://google.com">Google</button>
+          <button class="chip" type="button" data-url="https://youtube.com">YouTube</button>
+          <button class="chip" type="button" data-url="https://wikipedia.org">Wikipedia</button>
+          <button class="chip" type="button" data-url="https://github.com">GitHub</button>
+          <button class="chip" type="button" data-url="https://discord.com">Discord</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="layout">
+      <div class="stack">
+        <div class="card viewer-wrap">
+          <iframe
+            id="proxy-frame"
+            class="viewer hidden"
+            src="about:blank"
+            title="UV viewer"
+            referrerpolicy="no-referrer"
+          ></iframe>
+
+          <div id="viewer-placeholder" class="viewer-placeholder">
+            <div>
+              <h2>Ready for UV</h2>
+              <p>
+                When the Python UV backend is running and the service worker is registered,
+                pages will load through the Ultraviolet prefix inside this viewer.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="status">
+          <span id="status-dot" class="status-dot"></span>
+          <div>
+            <div id="status" class="status-text">Initializing frontend…</div>
+            <div id="status-subtext" class="status-subtext">
+              Waiting for service worker and transport setup.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="stack">
+        <div class="card card-pad">
+          <h2>Current setup</h2>
+          <div class="kv">
+            <div class="kv-row">
+              <span class="kv-key">Frontend</span>
+              <span class="kv-value">Static HTML + JS</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Proxy prefix</span>
+              <span class="kv-value codeish">/~/uv/</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">UV config</span>
+              <span class="kv-value codeish">/uv/uv.config.js</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Service worker</span>
+              <span class="kv-value codeish">/sw.js</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Wisp endpoint</span>
+              <span id="current-wisp" class="kv-value codeish">ws://127.0.0.1:4000/</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Transport order</span>
+              <span class="kv-value codeish">epoxy → libcurl</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Active transport</span>
+              <span id="current-transport" class="kv-value codeish">not ready</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">Open mode</span>
+              <span id="current-open-mode" class="kv-value codeish">iframe</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <h3>Settings</h3>
+          <div class="settings-grid">
+            <div class="setting-group">
+              <label class="setting-label" for="setting-homepage">Homepage</label>
+              <input
+                id="setting-homepage"
+                class="setting-input"
+                type="text"
+                placeholder="https://google.com"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="setting-help">
+                Used by the “Open homepage” button and as your preferred start page.
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" for="setting-search-engine">Search engine</label>
+              <select id="setting-search-engine" class="setting-select">
+                <option value="duckduckgo">DuckDuckGo</option>
+                <option value="google">Google</option>
+                <option value="bing">Bing</option>
+              </select>
+              <div class="setting-help">
+                Used when you type a search query instead of a direct URL.
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" for="setting-open-mode">Open mode</label>
+              <select id="setting-open-mode" class="setting-select">
+                <option value="iframe">Open inside viewer</option>
+                <option value="tab">Open in new tab</option>
+              </select>
+              <div class="setting-help">
+                Choose whether sites open inside the launcher or in a new browser tab.
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" for="setting-wisp-host">Wisp host</label>
+              <input
+                id="setting-wisp-host"
+                class="setting-input"
+                type="text"
+                placeholder="127.0.0.1"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" for="setting-wisp-port">Wisp port</label>
+              <input
+                id="setting-wisp-port"
+                class="setting-input"
+                type="text"
+                placeholder="4000"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="setting-help">
+                Useful if you change the Wisp port in the Python launcher.
+              </div>
+            </div>
+
+            <div class="setting-actions">
+              <button id="save-settings" class="btn btn-primary" type="button">Save settings</button>
+              <button id="reset-settings" class="btn" type="button">Reset settings</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <h3>Helpful notes</h3>
+          <ul class="help-list">
+            <li>Simpler sites are usually the easiest to support.</li>
+            <li>Discord-like apps may still be unreliable even when UV is healthy.</li>
+            <li>If the Wisp port changes, update it here and save.</li>
+            <li>Your settings are stored locally in this browser only.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Built for the Python UV setup.
+  </footer>
+
+  <script type="module">
+    const $ = (selector) => document.querySelector(selector);
+
+    const STORAGE_KEY = "teral-uv:settings";
+    const DEFAULT_SETTINGS = {
+      homepage: "https://google.com",
+      searchEngine: "duckduckgo",
+      openMode: "iframe",
+      wispHost: "127.0.0.1",
+      wispPort: "4000"
+    };
+
+    const form = $("#proxy-form");
+    const input = $("#proxy-input");
+    const iframe = $("#proxy-frame");
+    const viewerPlaceholder = $("#viewer-placeholder");
+    const status = $("#status");
+    const statusSubtext = $("#status-subtext");
+    const statusDot = $("#status-dot");
+    const chips = document.querySelectorAll("[data-url]");
+    const openTopBtn = $("#open-top");
+    const openHomepageBtn = $("#open-homepage");
+    const resetBtn = $("#reset-app");
+
+    const settingHomepage = $("#setting-homepage");
+    const settingSearchEngine = $("#setting-search-engine");
+    const settingOpenMode = $("#setting-open-mode");
+    const settingWispHost = $("#setting-wisp-host");
+    const settingWispPort = $("#setting-wisp-port");
+    const saveSettingsBtn = $("#save-settings");
+    const resetSettingsBtn = $("#reset-settings");
+
+    const currentWisp = $("#current-wisp");
+    const currentTransport = $("#current-transport");
+    const currentOpenMode = $("#current-open-mode");
+
+    let currentProxyUrl = "";
+    let uvReady = false;
+    let swRegistered = false;
+    let activeTransport = "";
+    let lastInitError = "";
+    let settings = loadSettings();
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { ...DEFAULT_SETTINGS };
+        const parsed = JSON.parse(raw);
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed
+        };
+      } catch (_) {
+        return { ...DEFAULT_SETTINGS };
+      }
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      } catch (_) {}
+    }
+
+    function applySettingsToForm() {
+      settingHomepage.value = settings.homepage;
+      settingSearchEngine.value = settings.searchEngine;
+      settingOpenMode.value = settings.openMode;
+      settingWispHost.value = settings.wispHost;
+      settingWispPort.value = settings.wispPort;
+      currentWisp.textContent = getWispUrl();
+      currentOpenMode.textContent = settings.openMode;
+    }
+
+    function resetSettingsToDefaults() {
+      settings = { ...DEFAULT_SETTINGS };
+      saveSettings();
+      applySettingsToForm();
+      currentTransport.textContent = "not ready";
+      activeTransport = "";
+      lastInitError = "";
+      uvReady = false;
+      setStatus("Settings reset. Reinitializing UV…", "pending", "Applying defaults and reconfiguring transport.");
+      initUv();
+    }
+
+    function setStatus(message, state = "pending", subtext = "") {
+      if (status) status.textContent = message;
+      if (statusSubtext && subtext) statusSubtext.textContent = subtext;
+      if (!statusDot) return;
+
+      statusDot.classList.remove("ok", "bad");
+      if (state === "ok") statusDot.classList.add("ok");
+      if (state === "bad") statusDot.classList.add("bad");
+    }
+
+    function formatError(error) {
+      if (error instanceof Error) return error.message;
+      return String(error);
+    }
+
+    function buildSearchUrl(query) {
+      switch (settings.searchEngine) {
+        case "google":
+          return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        case "bing":
+          return `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+        default:
+          return `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+      }
+    }
+
+    function normalizeInput(value) {
+      const trimmed = (value || "").trim();
+      if (!trimmed) return "";
+
+      try {
+        return new URL(trimmed).toString();
+      } catch (_) {}
+
+      try {
+        const withProtocol = new URL(`https://${trimmed}`);
+        if (withProtocol.hostname.includes(".")) {
+          return withProtocol.toString();
+        }
+      } catch (_) {}
+
+      return buildSearchUrl(trimmed);
+    }
+
+    async function ensureUvAssets() {
+      const scripts = [
+        "/uv/uv.bundle.js",
+        "/uv/uv.config.js"
+      ];
+
+      for (const src of scripts) {
+        if (document.querySelector(`script[data-src="${src}"]`)) continue;
+
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.defer = true;
+          script.dataset.src = src;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.body.appendChild(script);
+        });
+      }
+    }
+
+    async function registerServiceWorker() {
+      if (!("serviceWorker" in navigator)) {
+        throw new Error("Service workers are not supported in this browser.");
+      }
+
+      const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      await navigator.serviceWorker.ready;
+      swRegistered = true;
+      return registration;
+    }
+
+    function getWispUrl() {
+      const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+      const host = (settings.wispHost || DEFAULT_SETTINGS.wispHost).trim();
+      const port = (settings.wispPort || DEFAULT_SETTINGS.wispPort).trim();
+      return `${protocol}//${host}:${port}/`;
+    }
+
+    async function configureTransport() {
+      try {
+        const mod = await import("/baremux/index.mjs");
+        const BareMuxConnection = mod.BareMuxConnection || mod.default?.BareMuxConnection;
+
+        if (!BareMuxConnection) {
+          throw new Error("BareMuxConnection export not found.");
+        }
+
+        const connection = new BareMuxConnection("/baremux/worker.js");
+        const wispUrl = getWispUrl();
+        const attempts = [
+          {
+            name: "epoxy",
+            path: "/epoxy/index.mjs",
+            args: [{ wisp: wispUrl }]
+          },
+          {
+            name: "libcurl",
+            path: "/libcurl/index.mjs",
+            args: [{ websocket: wispUrl }]
+          }
+        ];
+
+        const failures = [];
+
+        for (const attempt of attempts) {
+          try {
+            setStatus(`Configuring ${attempt.name} transport…`, "pending", `Trying ${attempt.name} via ${wispUrl}`);
+            await connection.setTransport(attempt.path, attempt.args);
+            activeTransport = attempt.name;
+            currentTransport.textContent = attempt.name;
+            currentWisp.textContent = wispUrl;
+            return connection;
+          } catch (error) {
+            failures.push(`${attempt.name}: ${formatError(error)}`);
+          }
+        }
+
+        throw new Error(`All transports failed. ${failures.join(" | ")}`);
+      } catch (error) {
+        currentTransport.textContent = "failed";
+        throw new Error(`Transport setup failed: ${formatError(error)}`);
+      }
+    }
+
+    async function initUv() {
+      try {
+        setStatus("Loading UV assets…", "pending", "Fetching Ultraviolet browser assets.");
+        await ensureUvAssets();
+
+        setStatus("Registering service worker…", "pending", "Preparing the UV routing layer.");
+        await registerServiceWorker();
+
+        setStatus("Configuring transport…", "pending", "Connecting bare-mux to the Wisp backend.");
+        await configureTransport();
+
+        uvReady = true;
+        lastInitError = "";
+        setStatus(
+          `UV frontend ready (${activeTransport || "transport active"}).`,
+          "ok",
+          `Wisp endpoint: ${getWispUrl()}`
+        );
+      } catch (error) {
+        uvReady = false;
+        lastInitError = formatError(error);
+        setStatus(
+          lastInitError || "UV initialization failed.",
+          "bad",
+          "Check that the Python launcher is running and the Wisp settings are correct."
+        );
+      }
+    }
+
+    function buildProxyUrl(targetUrl) {
+      if (!window.__uv$config || typeof window.__uv$config.encodeUrl !== "function") {
+        throw new Error("UV config is not available yet.");
+      }
+
+      return `${window.__uv$config.prefix}${window.__uv$config.encodeUrl(targetUrl)}`;
+    }
+
+    function openResolvedTarget(normalized) {
+      try {
+        currentProxyUrl = buildProxyUrl(normalized);
+      } catch (error) {
+        setStatus(formatError(error) || "Failed to build UV URL.", "bad");
+        return;
+      }
+
+      if (settings.openMode === "tab") {
+        window.open(currentProxyUrl, "_blank", "noopener,noreferrer");
+        setStatus(`Opened ${normalized} in a new tab.`, "ok", `Transport: ${activeTransport || "unknown"}`);
+        return;
+      }
+
+      if (iframe) {
+        iframe.src = currentProxyUrl;
+        iframe.classList.remove("hidden");
+      }
+
+      if (viewerPlaceholder) {
+        viewerPlaceholder.classList.add("hidden");
+      }
+
+      setStatus(`Opening ${normalized}`, "ok", `Using ${activeTransport || "configured"} transport.`);
+    }
+
+    function openTarget(rawValue) {
+      const normalized = normalizeInput(rawValue);
+
+      if (!normalized) {
+        setStatus("Enter a URL or search term first.", "bad", "Nothing was entered.");
+        input?.focus();
+        return;
+      }
+
+      if (!uvReady) {
+        const detail = lastInitError ? ` Last error: ${lastInitError}` : "";
+        setStatus(`UV is not ready yet.${detail}`, "bad", "Try saving settings and waiting for initialization.");
+        return;
+      }
+
+      try {
+        localStorage.setItem("python-uv:last-url", normalized);
+      } catch (_) {}
+
+      if (input) {
+        input.value = normalized;
+      }
+
+      openResolvedTarget(normalized);
+    }
+
+    function openHomepage() {
+      openTarget(settings.homepage || DEFAULT_SETTINGS.homepage);
+    }
+
+    function resetApp() {
+      currentProxyUrl = "";
+
+      try {
+        localStorage.removeItem("python-uv:last-url");
+      } catch (_) {}
+
+      if (iframe) {
+        iframe.src = "about:blank";
+        iframe.classList.add("hidden");
+      }
+
+      if (viewerPlaceholder) {
+        viewerPlaceholder.classList.remove("hidden");
+      }
+
+      if (input) {
+        input.value = "";
+        input.focus();
+      }
+
+      activeTransport = "";
+      currentTransport.textContent = "not ready";
+      lastInitError = "";
+      uvReady = false;
+      setStatus(
+        swRegistered ? "Reset complete. Reinitializing UV…" : "Reset complete, but UV is not ready.",
+        swRegistered ? "ok" : "pending",
+        swRegistered ? "The frontend will configure the transport again." : "Start the backend if it is not running."
+      );
+
+      initUv();
+    }
+
+    function restoreLastUrl() {
+      try {
+        const last = localStorage.getItem("python-uv:last-url");
+        if (last && input && !input.value.trim()) {
+          input.value = last;
+        }
+      } catch (_) {}
+    }
+
+    function handleSaveSettings() {
+      settings = {
+        homepage: normalizeInput(settingHomepage.value || DEFAULT_SETTINGS.homepage) || DEFAULT_SETTINGS.homepage,
+        searchEngine: settingSearchEngine.value || DEFAULT_SETTINGS.searchEngine,
+        openMode: settingOpenMode.value || DEFAULT_SETTINGS.openMode,
+        wispHost: (settingWispHost.value || DEFAULT_SETTINGS.wispHost).trim(),
+        wispPort: (settingWispPort.value || DEFAULT_SETTINGS.wispPort).trim()
+      };
+
+      saveSettings();
+      applySettingsToForm();
+      activeTransport = "";
+      currentTransport.textContent = "reconfiguring";
+      uvReady = false;
+      lastInitError = "";
+      setStatus("Settings saved. Reinitializing UV…", "pending", `Updated Wisp endpoint: ${getWispUrl()}`);
+      initUv();
+    }
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      openTarget(input?.value || "");
+    });
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        openTarget(chip.dataset.url || "");
+      });
+    });
+
+    openTopBtn?.addEventListener("click", () => {
+      if (!currentProxyUrl) {
+        setStatus("Load a page first.", "bad", "There is no active proxied URL yet.");
+        return;
+      }
+      window.open(currentProxyUrl, "_blank", "noopener,noreferrer");
+    });
+
+    openHomepageBtn?.addEventListener("click", () => {
+      openHomepage();
+    });
+
+    resetBtn?.addEventListener("click", resetApp);
+    saveSettingsBtn?.addEventListener("click", handleSaveSettings);
+    resetSettingsBtn?.addEventListener("click", resetSettingsToDefaults);
+
+    iframe?.addEventListener("load", () => {
+      if (!currentProxyUrl) return;
+      setStatus("Page loaded.", "ok", `Active transport: ${activeTransport || "unknown"}`);
+    });
+
+    window.addEventListener("keydown", (event) => {
+      const isTyping =
+        document.activeElement &&
+        ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
+
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
+        event.preventDefault();
+        input?.focus();
+        input?.select();
+        return;
+      }
+
+      if (!isTyping && event.key === "/") {
+        event.preventDefault();
+        input?.focus();
+      }
+    });
+
+    applySettingsToForm();
+    restoreLastUrl();
+    initUv();
+  </script>
+</body>
+</html>
